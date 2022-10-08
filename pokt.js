@@ -74,7 +74,7 @@ var argv = require("yargs/yargs")(process.argv.slice(2))
   .showHelpOnFail(false, "whoops, something went wrong! run with --help").argv;
 
 if (argv.networks.length > 0) {
-  const private = "/v1/lb/" + POKT_PRIVATE_KEY;
+  const private = "/v1/lb/" + POKT_PORTAL_ID;
   argv.networks.forEach(async (network) => {
     const ret = await axios.get("https://docs.pokt.network/use/public-rpc/");
     const $ = cheerio.load(ret.data);
