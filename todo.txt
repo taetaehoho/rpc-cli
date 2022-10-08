@@ -1,4 +1,0 @@
-1. make it so that just the -p flag makes it private (don't have to write true/false)
-2. chainlink 
-3. make it npm package 
-4. custom command instead of node index.js
