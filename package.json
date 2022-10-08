@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A simple Yargs CLI",
   "bin": {
-    "yargs-example": "./yargs-example.js"
+    "index": "./index.js"
   },
   "keywords": [
     "cli"
