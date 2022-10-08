@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const axios = require("axios");
+const vrf = require("./vrf");
 const cheerio = require("cheerio");
 const fs = require("fs");
 require("dotenv").config();
@@ -8,7 +9,8 @@ const POKT_PRIVATE_KEY = process.env.POKT_PRIVATE_KEY || "";
 
 var argv = require("yargs/yargs")(process.argv.slice(2))
   .usage("Usage: $0 <cmd> [options]") // usage string of application.
-  .command("RPC", "fetches all RPC URLs of specified networks") // describe commands available.
+  .command("RPC", "fetches all RPC URLs of specified networks")
+  .command("chainlink", "fetch vrf addresses")
   .option("networks", {
     array: true,
     description:
@@ -54,6 +56,12 @@ var argv = require("yargs/yargs")(process.argv.slice(2))
     default: false,
     alias: "p",
   })
+  .option("chainlink", {
+    alias: "c",
+    description: "fetch vrf addresses",
+    default: [],
+    array: true,
+  })
   .option("h", {
     alias: "help",
     description: "display help message",
@@ -91,6 +99,22 @@ if (argv.networks.length > 0) {
         }
       });
   });
-} else {
-  throw Error("Must pass in at least one network");
+}
+
+if (argv.chainlink.length > 0) {
+  if (argv.chainlink.includes("vrf")) {
+    const vrflist = {};
+    for (const network of argv.networks) {
+      if (vrf[network] === undefined) {
+        break;
+      }
+      vrflist[network] = vrf[network];
+    }
+    console.log(vrflist);
+    let vrfWrite = "const vrfConfig = " + JSON.stringify(vrflist);
+
+    fs.appendFileSync("config.js", vrfWrite, "utf8", (error) => {
+      return error;
+    });
+  }
 }
