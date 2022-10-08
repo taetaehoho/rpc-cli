@@ -5,7 +5,7 @@ const cheerio = require("cheerio");
 const fs = require("fs");
 require("dotenv").config();
 
-const POKT_PRIVATE_KEY = process.env.POKT_PRIVATE_KEY || "";
+const POKT_PORTAL_ID = process.env.POKT_PORTAL_ID || "";
 
 var argv = require("yargs/yargs")(process.argv.slice(2))
   .usage("Usage: $0 <cmd> [options]") // usage string of application.
@@ -91,7 +91,10 @@ if (argv.networks.length > 0) {
               `${url}` +
               `${private} \n`;
           }
-          if (process.env[network.toUpperCase() + "_RPC_URL"] === undefined) {
+          if (
+            process.env[network.toUpperCase() + "_RPC_URL"] === undefined ||
+            argv.private
+          ) {
             fs.appendFileSync(".env", urlWrite, (error) => {
               return error;
             });

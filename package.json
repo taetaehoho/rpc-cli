@@ -15,5 +15,8 @@
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.0.3",
     "yargs": "^17.6.0"
+  },
+  "scripts": {
+    "pokt": "./pokt.js"
   }
 }
