@@ -1,6 +1,3 @@
-const cheerio = require("cheerio");
-
-const body = `
 <!DOCTYPE html>
 <!-- saved from url=(0041)https://docs.pokt.network/use/public-rpc/ -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="height=device-height,width=device-width,initial-scale=1,minimum-scale=1"><meta name="generator" content="Hugo 0.104.3"><meta name="generator" content="Relearn 5.2.1+tip"><meta name="description" content="We&#39;ve staked POKT on your behalf to provide public RPC endpoints for all of the networks that Pocket supports. Use these endpoints in any DApp that lets you use a custom endpoint."><meta name="author" content="Pocket Network"><title>Public RPC Endpoints - Pocket Network</title><link href="https://docs.pokt.network/use/public-rpc/index.xml" rel="alternate" type="application/rss+xml" title="Pocket Network"><link href="https://docs.pokt.network/use/public-rpc/index.print.html" rel="alternate" type="text/html" title="Pocket Network"><link href="https://docs.pokt.network/images/favicon.svg?1665164428" rel="icon" type="image/svg+xml"><link href="./Public RPC Endpoints - Pocket Network_files/fontawesome-all.min.css" rel="stylesheet" media="all" onload="this.media=&quot;all&quot;,this.onload=null"><noscript><link href=/css/fontawesome-all.min.css?1665164428 rel=stylesheet></noscript><link href="./Public RPC Endpoints - Pocket Network_files/featherlight.min.css" rel="stylesheet" media="all" onload="this.media=&quot;all&quot;,this.onload=null"><noscript><link href=/css/featherlight.min.css?1665164428 rel=stylesheet></noscript><link href="./Public RPC Endpoints - Pocket Network_files/auto-complete.css" rel="stylesheet" media="all" onload="this.media=&quot;all&quot;,this.onload=null"><noscript><link href=/css/auto-complete.css?1665164428 rel=stylesheet></noscript><link href="./Public RPC Endpoints - Pocket Network_files/perfect-scrollbar.min.css" rel="stylesheet"><link href="./Public RPC Endpoints - Pocket Network_files/nucleus.css" rel="stylesheet"><link href="./Public RPC Endpoints - Pocket Network_files/fonts.css" rel="stylesheet" media="all" onload="this.media=&quot;all&quot;,this.onload=null"><noscript><link href=/css/fonts.css?1665164428 rel=stylesheet></noscript><link href="./Public RPC Endpoints - Pocket Network_files/theme.css" rel="stylesheet"><link id="variant-style" rel="stylesheet" href="./Public RPC Endpoints - Pocket Network_files/theme-pokt.css"><link href="./Public RPC Endpoints - Pocket Network_files/ie.css" rel="stylesheet"><link href="./Public RPC Endpoints - Pocket Network_files/variant.css" rel="stylesheet"><link href="./Public RPC Endpoints - Pocket Network_files/print.css" rel="stylesheet" media="print"><script src="./Public RPC Endpoints - Pocket Network_files/variant.js"></script>
@@ -409,13 +406,4 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
 <script src="./Public RPC Endpoints - Pocket Network_files/perfect-scrollbar.min.js" defer=""></script>
 <script src="./Public RPC Endpoints - Pocket Network_files/featherlight.min.js" defer=""></script>
 <script>function useMathJax(e){if(!Object.assign)return;window.MathJax=Object.assign(window.MathJax||{},{loader:{load:["[tex]/mhchem"]},startup:{elements:[".math"]},tex:{inlineMath:[["$","$"],["\\(","\\)"]]},options:{enableMenu:!1}},e)}useMathJax(JSON.parse('{ "chtml": { "displayAlign": "left" } }'))</script><script id="MathJax-script" async="" src="./Public RPC Endpoints - Pocket Network_files/tex-mml-chtml.js"></script>
-<script src="./Public RPC Endpoints - Pocket Network_files/theme.js" defer=""></script><div style="position: static !important;"></div></body></html>`;
-
-const $ = cheerio.load(body);
-$("table > tbody > tr > td")
-  .find("a")
-  .each(function (i, link) {
-    if ($(link).text().includes("pokt")) {
-      console.log($(link).text());
-    }
-  });
+<script src="./Public RPC Endpoints - Pocket Network_files/theme.js" defer=""></script><div style="position: static !important;"></div></body></html>
