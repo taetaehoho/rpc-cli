@@ -16,21 +16,59 @@ var argv = require("yargs/yargs")(process.argv.slice(2))
   .option("networks", {
     array: true,
     description:
-      "an array of network names [gorli | mainnet | mumbai | polygon ...etc ]",
+      "an array of network names [goerli | mainnet | mumbai | avax ...etc ]",
     default: [],
     alias: "n",
     demandOption: true,
+    choices: [
+      "algo",
+      "avax",
+      "bsc",
+      "bsc-archival",
+      "boba",
+      "avax-dfk",
+      "eth",
+      "eth-archival",
+      "eth-kovan",
+      "eth-rinkeby",
+      "eth-ropsten",
+      "eth-trace",
+      "evmos",
+      "fantom",
+      "fuse",
+      "fuse-archival",
+      "gnosishain",
+      "harmony-0",
+      "iotex",
+      "klaytn",
+      "moonbeam",
+      "moonriver",
+      "near",
+      "optimism",
+      "osmosis",
+      "pokt",
+      "poly",
+      "mumbai",
+      "solana",
+      "goerli",
+    ],
   })
   .option("private", {
     description: "use private RPC URL",
     default: false,
     alias: "p",
   })
+  .option("chainlink", {
+    alias: "c",
+    array: true,
+    description: "add chainlink vrf or aggregatorv3interface information",
+    default: [],
+  })
   .option("h", {
     alias: "help",
     description: "display help message",
   })
-  .string("networks")
+  .string("chainlink")
   .boolean("private")
   .help("help")
   .version("1.0.1", "version", "display version information") // the version string.
@@ -56,14 +94,36 @@ if (argv.networks.length > 0) {
               `${url}` +
               `${private} \n`;
           }
-          fs.appendFileSync("urls.txt", urlWrite, (error) => {
-            if (error) {
-              return error;
-            }
-          });
+          // fs.appendFileSync("urls.txt", urlWrite, (error) => {
+          //   if (error) {
+          //     return error;
+          //   }
+          // });
         }
       });
   });
 } else {
   throw Error("Must pass in at least one network");
+}
+
+if (argv.chainlink.length > 0) {
+  const lower = [];
+  argv.chainlink.forEach((element) => {
+    lower.push(element.toLowerCase());
+  });
+  if (argv.chainlink.includes("vrf")) {
+    const ret = axios
+      .get(
+        "https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/"
+      )
+      .then((res) => {
+        const logs = [];
+        const $ = cheerio.load(res.data);
+        $("table > tbody > tr > td").each(function (i, element) {
+          console.log($(element).text());
+          logs.push($(element).text());
+        });
+        console.log(logs);
+      });
+  }
 }
