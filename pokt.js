@@ -47,7 +47,7 @@ var argv = require("yargs/yargs")(process.argv.slice(2))
       "pokt",
       "poly",
       "mumbai",
-      "solana",
+      "solana-mainnet",
       "goerli",
     ],
   })
@@ -70,7 +70,7 @@ var argv = require("yargs/yargs")(process.argv.slice(2))
   .help("help")
   .version("1.0.1", "version", "display version information") // the version string.
   .alias("version", "v")
-  .example("node index.js --networks [gorli, mumbai, mainnet]")
+  .example("./pokt.js --networks gorli mumbai mainnet solana --chainlink vrf")
   .showHelpOnFail(false, "whoops, something went wrong! run with --help").argv;
 
 if (argv.networks.length > 0) {
@@ -91,11 +91,11 @@ if (argv.networks.length > 0) {
               `${url}` +
               `${private} \n`;
           }
-          fs.appendFileSync("urls.txt", urlWrite, (error) => {
-            if (error) {
+          if (process.env[network.toUpperCase() + "_RPC_URL"] === undefined) {
+            fs.appendFileSync(".env", urlWrite, (error) => {
               return error;
-            }
-          });
+            });
+          }
         }
       });
   });
@@ -110,7 +110,6 @@ if (argv.chainlink.length > 0) {
       }
       vrflist[network] = vrf[network];
     }
-    console.log(vrflist);
     let vrfWrite = "const vrfConfig = " + JSON.stringify(vrflist);
 
     fs.appendFileSync("config.js", vrfWrite, "utf8", (error) => {
