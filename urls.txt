@@ -1,0 +1,2 @@
+GOERLI_RPC_URL=https://eth-goerli-rpc.gateway.pokt.network 
+MUMBAI_RPC_URL=https://polygon-mumbai-rpc.gateway.pokt.network 

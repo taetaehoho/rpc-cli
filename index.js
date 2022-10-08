@@ -9,10 +9,6 @@ const POKT_PRIVATE_KEY = process.env.POKT_PRIVATE_KEY || "";
 var argv = require("yargs/yargs")(process.argv.slice(2))
   .usage("Usage: $0 <cmd> [options]") // usage string of application.
   .command("RPC", "fetches all RPC URLs of specified networks") // describe commands available.
-  .command(
-    "chainlink",
-    "fetches all chainlink addresses of specified networks and depedencies"
-  )
   .option("networks", {
     array: true,
     description:
@@ -58,17 +54,10 @@ var argv = require("yargs/yargs")(process.argv.slice(2))
     default: false,
     alias: "p",
   })
-  .option("chainlink", {
-    alias: "c",
-    array: true,
-    description: "add chainlink vrf or aggregatorv3interface information",
-    default: [],
-  })
   .option("h", {
     alias: "help",
     description: "display help message",
   })
-  .string("chainlink")
   .boolean("private")
   .help("help")
   .version("1.0.1", "version", "display version information") // the version string.
@@ -94,36 +83,14 @@ if (argv.networks.length > 0) {
               `${url}` +
               `${private} \n`;
           }
-          // fs.appendFileSync("urls.txt", urlWrite, (error) => {
-          //   if (error) {
-          //     return error;
-          //   }
-          // });
+          fs.appendFileSync("urls.txt", urlWrite, (error) => {
+            if (error) {
+              return error;
+            }
+          });
         }
       });
   });
 } else {
   throw Error("Must pass in at least one network");
-}
-
-if (argv.chainlink.length > 0) {
-  const lower = [];
-  argv.chainlink.forEach((element) => {
-    lower.push(element.toLowerCase());
-  });
-  if (argv.chainlink.includes("vrf")) {
-    const ret = axios
-      .get(
-        "https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/"
-      )
-      .then((res) => {
-        const logs = [];
-        const $ = cheerio.load(res.data);
-        $("table > tbody > tr > td").each(function (i, element) {
-          console.log($(element).text());
-          logs.push($(element).text());
-        });
-        console.log(logs);
-      });
-  }
 }
