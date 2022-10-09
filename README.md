@@ -1,4 +1,4 @@
-Run
+Get your multichain RPC urls and chainlink VRF addresses for multichain development using pokt!
 
 ```
 npm install
