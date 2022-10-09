@@ -3,6 +3,7 @@ const axios = require("axios");
 const vrf = require("./vrf");
 const cheerio = require("cheerio");
 const fs = require("fs");
+const chainId = require("./chainId");
 require("dotenv").config();
 
 const POKT_PORTAL_ID = process.env.POKT_PORTAL_ID || "";
@@ -10,7 +11,11 @@ const POKT_PORTAL_ID = process.env.POKT_PORTAL_ID || "";
 var argv = require("yargs/yargs")(process.argv.slice(2))
   .usage("Usage: $0 <cmd> [options]") // usage string of application.
   .command("RPC", "fetches all RPC URLs of specified networks")
-  .command("chainlink", "fetch vrf addresses")
+  .command("vrf", "fetch vrf addresses")
+  .command(
+    "pricefeed",
+    "fetch price feed addresses - only supports popular ones"
+  )
   .option("networks", {
     array: true,
     description:
@@ -56,9 +61,14 @@ var argv = require("yargs/yargs")(process.argv.slice(2))
     default: false,
     alias: "p",
   })
-  .option("chainlink", {
-    alias: "c",
+  .option("vrf", {
+    alias: "v",
     description: "fetch vrf addresses",
+    default: false,
+  })
+  .options("pricefeed", {
+    alias: "pf",
+    description: "fetches chainlink pricefeed addresses",
     default: [],
     array: true,
   })
@@ -67,10 +77,14 @@ var argv = require("yargs/yargs")(process.argv.slice(2))
     description: "display help message",
   })
   .boolean("private")
+  .boolean("vrf")
+  .string("pricefeed")
   .help("help")
   .version("1.0.1", "version", "display version information") // the version string.
   .alias("version", "v")
-  .example("./pokt.js --networks gorli mumbai mainnet solana --chainlink vrf")
+  .example(
+    "./pokt.js --networks gorli mumbai mainnet solana --vrf --pricefeed eth/usd"
+  )
   .showHelpOnFail(false, "whoops, something went wrong! run with --help").argv;
 
 if (argv.networks.length > 0) {
@@ -104,19 +118,73 @@ if (argv.networks.length > 0) {
   });
 }
 
-if (argv.chainlink.length > 0) {
-  if (argv.chainlink.includes("vrf")) {
-    const vrflist = {};
-    for (const network of argv.networks) {
-      if (vrf[network] === undefined) {
-        break;
-      }
-      vrflist[network] = vrf[network];
+if (argv.vrf) {
+  const vrflist = {};
+  for (const network of argv.networks) {
+    if (vrf[network] === undefined) {
     }
-    let vrfWrite = "const vrfConfig = " + JSON.stringify(vrflist);
+    vrflist[network] = vrf[network];
+  }
+  let vrfWrite = "const vrfConfig = " + JSON.stringify(vrflist);
 
-    fs.appendFileSync("config.js", vrfWrite, "utf8", (error) => {
+  fs.appendFileSync("config.js", vrfWrite, "utf8", (error) => {
+    return error;
+  });
+}
+
+if (argv.pricefeed.length > 0) {
+  const do2 = axios.get("https://data.chain.link/popular").then((ret) => {
+    const $ = cheerio.load(ret.data);
+    const priceStrings = [];
+    $("table > tbody > tr").each((i, link) => {
+      priceStrings.push(
+        $(link).text().split("0x")[0].toLowerCase().replace(/ /g, ""),
+        $(link).attr("id").split("_")
+      );
+    });
+
+    let chain = [];
+
+    for (const network of argv.networks) {
+      for (let i = 0; i < chainId.length; i++) {
+        if (chainId[i].name.toLowerCase().includes(network)) {
+          chain.push(chainId[i].chainId);
+        }
+      }
+    }
+
+    let chainlinkpricefeed = [];
+    let finalchain;
+    for (pricefeed of argv.pricefeed) {
+      let index = getAllIndexes(priceStrings, pricefeed);
+      for (i of index) {
+        for (j of chain) {
+          if (priceStrings[i + 1][0] == j) {
+            finalchain = j;
+            chainlinkpricefeed.push(priceStrings[i + 1][1]);
+          }
+        }
+      }
+    }
+
+    let pricefeedWrite =
+      "const priceFeedConfig = {" +
+      `${finalchain}` +
+      ":" +
+      `"${chainlinkpricefeed}"` +
+      "}";
+
+    console.log(pricefeedWrite);
+
+    fs.appendFileSync("config.js", pricefeedWrite, (error) => {
       return error;
     });
-  }
+  });
+}
+
+function getAllIndexes(arr, val) {
+  var indexes = [],
+    i;
+  for (i = 0; i < arr.length; i++) if (arr[i] === val) indexes.push(i);
+  return indexes;
 }
